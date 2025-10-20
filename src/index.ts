@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import { config } from './config/environment';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFoundHandler';
+import uploadRoutes from './routes/upload';
 
 const app = express();
 
@@ -34,14 +35,19 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes will be added here
+// API routes
+app.use('/upload', uploadRoutes);
+
 app.get('/', (req, res) => {
   res.json({
     message: 'AI CV Evaluator API',
     version: '1.0.0',
     endpoints: {
-      health: '/health',
-      upload: 'POST /upload',
+      health: 'GET /health',
+      upload: {
+        cv: 'POST /upload/cv',
+        project: 'POST /upload/project'
+      },
       evaluate: 'POST /evaluate',
       result: 'GET /result/:id'
     }

@@ -7,6 +7,7 @@ import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFoundHandler';
 import uploadRoutes from './routes/upload';
 import evaluationRoutes from './routes/evaluation';
+import resultsRoutes from './routes/results';
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/upload', uploadRoutes);
 app.use('/evaluate', evaluationRoutes);
+app.use('/result', resultsRoutes);
 
 app.get('/', (req, res) => {
   res.json({
@@ -56,7 +58,13 @@ app.get('/', (req, res) => {
         jobs: 'GET /evaluate/jobs',
         cancel: 'DELETE /evaluate/:jobId'
       },
-      result: 'GET /result/:id'
+      result: {
+        single: 'GET /result/:jobId',
+        batch: 'POST /result/batch',
+        byStatus: 'GET /result/status/:status',
+        recent: 'GET /result/recent/completed',
+        search: 'GET /result/search?q=query'
+      }
     }
   });
 });

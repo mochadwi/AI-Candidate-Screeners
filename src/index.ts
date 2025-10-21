@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import { config } from './config/environment';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFoundHandler';
+import { rateLimit, requestLogger, securityHeaders } from './middleware/validationMiddleware';
 import uploadRoutes from './routes/upload';
 import evaluationRoutes from './routes/evaluation';
 import resultsRoutes from './routes/results';
@@ -14,13 +15,30 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
+// Custom security headers
+app.use(securityHeaders);
+
 // CORS configuration
 app.use(cors({
   origin: config.cors.allowedOrigins,
   credentials: true
 }));
 
-// Request logging
+// Rate limiting
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later'
+}));
+
+// Request logging (custom, more detailed than morgan)
+app.use(requestLogger({
+  logBody: config.app.env === 'development',
+  logHeaders: false,
+  excludePaths: ['/health']
+}));
+
+// Fallback to morgan for standard HTTP logging
 app.use(morgan('combined'));
 
 // Body parsing middleware

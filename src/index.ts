@@ -117,4 +117,10 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
-startServer();
+// Only start server if this file is run directly
+if (require.main === module) {
+  startServer();
+}
+
+// Export app for testing
+export default app;

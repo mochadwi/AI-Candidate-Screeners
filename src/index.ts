@@ -9,6 +9,7 @@ import { rateLimit, requestLogger, securityHeaders } from './middleware/validati
 import uploadRoutes from './routes/upload';
 import evaluationRoutes from './routes/evaluation';
 import resultsRoutes from './routes/results';
+import healthRoutes from './routes/health';
 
 const app = express();
 
@@ -59,13 +60,20 @@ app.get('/health', (req, res) => {
 app.use('/upload', uploadRoutes);
 app.use('/evaluate', evaluationRoutes);
 app.use('/result', resultsRoutes);
+app.use('/health', healthRoutes);
 
 app.get('/', (req, res) => {
   res.json({
     message: 'AI CV Evaluator API',
     version: '1.0.0',
     endpoints: {
-      health: 'GET /health',
+      health: {
+        basic: 'GET /health',
+        detailed: 'GET /health/detailed',
+        ready: 'GET /health/ready',
+        live: 'GET /health/live',
+        metrics: 'GET /health/metrics'
+      },
       upload: {
         cv: 'POST /upload/cv',
         project: 'POST /upload/project'

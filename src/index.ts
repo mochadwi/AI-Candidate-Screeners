@@ -6,6 +6,7 @@ import { config } from './config/environment';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFoundHandler';
 import uploadRoutes from './routes/upload';
+import evaluationRoutes from './routes/evaluation';
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/upload', uploadRoutes);
+app.use('/evaluate', evaluationRoutes);
 
 app.get('/', (req, res) => {
   res.json({
@@ -48,7 +50,12 @@ app.get('/', (req, res) => {
         cv: 'POST /upload/cv',
         project: 'POST /upload/project'
       },
-      evaluate: 'POST /evaluate',
+      evaluate: {
+        create: 'POST /evaluate',
+        stats: 'GET /evaluate/stats',
+        jobs: 'GET /evaluate/jobs',
+        cancel: 'DELETE /evaluate/:jobId'
+      },
       result: 'GET /result/:id'
     }
   });

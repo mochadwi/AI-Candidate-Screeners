@@ -94,6 +94,7 @@ export interface APIResponse<T = any> {
 // AI Provider Interface
 export interface IAIProvider {
   evaluate(prompt: string): Promise<string>;
+  evaluateCVAndProject(cvText: string, projectText: string, jobTitle: string): Promise<EvaluationResult>;
   isConfigured(): boolean;
 }
 

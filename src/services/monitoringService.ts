@@ -114,21 +114,30 @@ export class MonitoringService {
     const startTime = Date.now();
 
     try {
-      // Check if OpenAI API key is configured
-      if (!config.ai.openaiApiKey || config.ai.openaiApiKey === '') {
+      // Check if AI API key is configured
+      if (!config.ai.apiKey || config.ai.apiKey === '') {
         return {
           status: 'fail',
-          message: 'OpenAI API key not configured'
+          message: 'AI API key not configured'
         };
       }
 
+      const providerName = config.ai.provider === 'zhipu' ? 'Zhipu AI' : 'OpenAI';
+
       // Simple check - just validate the key format
-      const keyFormatValid = config.ai.openaiApiKey.startsWith('sk-') && config.ai.openaiApiKey.length > 20;
+      let keyFormatValid = false;
+      if (config.ai.provider === 'zhipu') {
+        // Zhipu AI keys typically start with different patterns
+        keyFormatValid = config.ai.apiKey.length > 10;
+      } else {
+        // OpenAI keys start with 'sk-'
+        keyFormatValid = config.ai.apiKey.startsWith('sk-') && config.ai.apiKey.length > 20;
+      }
 
       if (!keyFormatValid) {
         return {
           status: 'warn',
-          message: 'OpenAI API key format appears invalid'
+          message: `${providerName} API key format appears invalid`
         };
       }
 
@@ -138,8 +147,9 @@ export class MonitoringService {
         status: 'pass',
         responseTime,
         details: {
-          provider: 'OpenAI',
-          model: config.ai.model
+          provider: providerName,
+          model: config.ai.model,
+          baseUrl: config.ai.baseUrl || 'default'
         }
       };
 

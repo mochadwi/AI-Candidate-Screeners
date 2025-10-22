@@ -10,16 +10,23 @@ export class OpenAIProvider implements IAIProvider {
 
   constructor() {
     if (!this.isConfigured()) {
-      throw new AppError('OpenAI API key not configured', 500);
+      throw new AppError('AI API key not configured', 500);
     }
 
-    this.client = new OpenAI({
-      apiKey: config.ai.openaiApiKey
-    });
+    const clientConfig: any = {
+      apiKey: config.ai.apiKey
+    };
+
+    // Add base URL if configured
+    if (config.ai.baseUrl) {
+      clientConfig.baseURL = config.ai.baseUrl;
+    }
+
+    this.client = new OpenAI(clientConfig);
   }
 
   isConfigured(): boolean {
-    return !!config.ai.openaiApiKey && config.ai.openaiApiKey !== '';
+    return !!config.ai.apiKey && config.ai.apiKey !== '';
   }
 
   async evaluate(prompt: string): Promise<string> {
@@ -58,7 +65,8 @@ export class OpenAIProvider implements IAIProvider {
         // Don't retry on certain errors
         if (error instanceof OpenAI.APIError) {
           if (error.status === 400 || error.status === 401 || error.status === 403) {
-            throw new AppError(`OpenAI API error: ${error.message}`, error.status || 500);
+            const providerName = config.ai.provider === 'zhipu' ? 'Zhipu AI' : 'OpenAI';
+            throw new AppError(`${providerName} API error: ${error.message}`, error.status || 500);
           }
         }
 
@@ -188,5 +196,13 @@ Ensure the response is valid JSON only, no additional text.`;
 
 // Factory function to create AI provider
 export function createAIProvider(): IAIProvider {
+  const provider = config.ai.provider;
+
+  if (provider === 'zhipu') {
+    console.log('🤖 Using Zhipu AI GLM model');
+  } else {
+    console.log('🤖 Using OpenAI model');
+  }
+
   return new OpenAIProvider();
 }

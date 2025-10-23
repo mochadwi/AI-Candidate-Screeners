@@ -1,4 +1,4 @@
-# AI CV Evaluator
+# AI Candidate Screeners
 
 An AI-powered backend service for evaluating CVs and project reports using OpenAI's language models.
 

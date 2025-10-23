@@ -1,0 +1,36 @@
+{
+  "name": "AI Candidate Screeners - Development",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "cvFileId",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "projectFileId",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "jobId",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "jobTitle",
+      "value": "Senior Backend Developer",
+      "enabled": true,
+      "type": "default"
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

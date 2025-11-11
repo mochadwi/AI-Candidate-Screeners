@@ -24,7 +24,11 @@ const ensureUploadDir = async () => {
 ensureUploadDir();
 
 // Middleware to handle multiple file uploads (CV and project)
-const validateMultipleFiles = (req: Request, res: Response, next: NextFunction) => {
+const validateMultipleFiles = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, config.upload.uploadDir);
@@ -33,10 +37,14 @@ const validateMultipleFiles = (req: Request, res: Response, next: NextFunction) 
       const uniqueSuffix = uuidv4();
       const extension = path.extname(file.originalname);
       cb(null, `${file.fieldname}_${uniqueSuffix}${extension}`);
-    }
+    },
   });
 
-  const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  const fileFilter = (
+    req: any,
+    file: Express.Multer.File,
+    cb: multer.FileFilterCallback,
+  ) => {
     if (file.mimetype === "application/pdf") {
       cb(null, true);
     } else {
@@ -47,19 +55,22 @@ const validateMultipleFiles = (req: Request, res: Response, next: NextFunction) 
   const uploadMiddleware = multer({
     storage,
     limits: {
-      fileSize: config.upload.maxFileSize
+      fileSize: config.upload.maxFileSize,
     },
-    fileFilter
+    fileFilter,
   }).fields([
     { name: "cv", maxCount: 1 },
-    { name: "project", maxCount: 1 }
+    { name: "project", maxCount: 1 },
   ]);
 
   uploadMiddleware(req, res, (error: any) => {
     if (error instanceof multer.MulterError) {
       if (error.code === "LIMIT_FILE_SIZE") {
         return next(
-          new AppError("File size too large. Maximum size is 10MB per file", 400),
+          new AppError(
+            "File size too large. Maximum size is 10MB per file",
+            400,
+          ),
         );
       }
       if (error.code === "LIMIT_UNEXPECTED_FILE") {
@@ -85,7 +96,7 @@ const validateMultipleFiles = (req: Request, res: Response, next: NextFunction) 
 router.post("/", validateMultipleFiles, async (req: Request, res: Response) => {
   try {
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-    
+
     // Validate that both files are provided
     if (!files || !files.cv || !files.project) {
       throw new AppError("Both CV and project files are required", 400);
@@ -98,7 +109,7 @@ router.post("/", validateMultipleFiles, async (req: Request, res: Response) => {
     // Save file information for both files
     const [cvFileInfo, projectFileInfo] = await Promise.all([
       fileService.saveFileInfo(files.cv[0], "cv"),
-      fileService.saveFileInfo(files.project[0], "project")
+      fileService.saveFileInfo(files.project[0], "project"),
     ]);
 
     res.status(201).json({
@@ -115,7 +126,7 @@ router.post("/", validateMultipleFiles, async (req: Request, res: Response) => {
           originalName: projectFileInfo.originalName,
           size: projectFileInfo.size,
           type: projectFileInfo.type,
-        }
+        },
       },
       timestamp: new Date().toISOString(),
     });

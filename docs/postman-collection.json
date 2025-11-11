@@ -2,12 +2,12 @@
   "info": {
     "name": "AI Candidate Screeners API",
     "description": "Comprehensive API documentation for AI-powered CV evaluation system",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Upload CV File",
+      "name": "Upload Both CV and Project Files",
       "request": {
         "method": "POST",
         "header": [
@@ -21,37 +21,13 @@
           "mode": "formdata",
           "formdata": [
             {
-              "key": "file",
+              "key": "cv",
               "type": "file",
               "src": "/path/to/cv.pdf",
               "description": "CV file to upload (PDF only, max 10MB)"
-            }
-          ]
-        },
-        "url": {
-          "raw": "{{baseUrl}}/upload/cv",
-          "host": ["{{baseUrl}}"],
-          "path": ["upload", "cv"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Upload Project File",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "multipart/form-data",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "formdata",
-          "formdata": [
+            },
             {
-              "key": "file",
+              "key": "project",
               "type": "file",
               "src": "/path/to/project.pdf",
               "description": "Project report file to upload (PDF only, max 10MB)"
@@ -59,9 +35,14 @@
           ]
         },
         "url": {
-          "raw": "{{baseUrl}}/upload/project",
-          "host": ["{{baseUrl}}"],
-          "path": ["upload", "project"]
+          "raw": "{{baseUrl}}/upload/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "upload",
+            ""
+          ]
         }
       },
       "response": []
@@ -87,33 +68,14 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/evaluate",
-          "host": ["{{baseUrl}}"],
-          "path": ["evaluate"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Get Job Statistics",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/evaluate/stats",
-          "host": ["{{baseUrl}}"],
-          "path": ["evaluate", "stats"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "List All Jobs",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/evaluate/jobs",
-          "host": ["{{baseUrl}}"],
-          "path": ["evaluate", "jobs"]
+          "raw": "{{baseUrl}}/evaluate/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "evaluate",
+            ""
+          ]
         }
       },
       "response": []
@@ -124,87 +86,12 @@
         "method": "GET",
         "url": {
           "raw": "{{baseUrl}}/result/{{jobId}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["result", "{{jobId}}"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Get Multiple Results",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"jobIds\": [\"{{jobId}}\", \"{{jobId2}}\"]\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{baseUrl}}/result/batch",
-          "host": ["{{baseUrl}}"],
-          "path": ["result", "batch"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Filter Results by Status",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/result/status/{{status}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["result", "status", "{{status}}"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Get Recent Completed Results",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/result/recent/completed?limit={{limit}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["result", "recent", "completed"],
-          "query": [
-            {
-              "key": "limit",
-              "value": "{{limit}}",
-              "description": "Number of results to return (default: 10, max: 100)"
-            }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Search Jobs by Title",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/result/search?q={{searchQuery}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["result", "search"],
-          "query": [
-            {
-              "key": "q",
-              "value": "{{searchQuery}}",
-              "description": "Search query for job titles"
-            }
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "result",
+            "{{jobId}}"
           ]
         }
       },
@@ -215,57 +102,14 @@
       "request": {
         "method": "GET",
         "url": {
-          "raw": "{{baseUrl}}/health",
-          "host": ["{{baseUrl}}"],
-          "path": ["health"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Detailed Health Check",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/health/detailed",
-          "host": ["{{baseUrl}}"],
-          "path": ["health", "detailed"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Readiness Probe",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/health/ready",
-          "host": ["{{baseUrl}}"],
-          "path": ["health", "ready"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Liveness Probe",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/health/live",
-          "host": ["{{baseUrl}}"],
-          "path": ["health", "live"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "System Metrics",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/health/metrics",
-          "host": ["{{baseUrl}}"],
-          "path": ["health", "metrics"]
+          "raw": "{{baseUrl}}/health/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health",
+            ""
+          ]
         }
       },
       "response": []
@@ -293,28 +137,8 @@
       "type": "default"
     },
     {
-      "key": "jobId2",
-      "value": "",
-      "type": "default"
-    },
-    {
       "key": "jobTitle",
       "value": "Senior Backend Developer",
-      "type": "default"
-    },
-    {
-      "key": "status",
-      "value": "completed",
-      "type": "default"
-    },
-    {
-      "key": "limit",
-      "value": "10",
-      "type": "default"
-    },
-    {
-      "key": "searchQuery",
-      "value": "",
       "type": "default"
     }
   ]

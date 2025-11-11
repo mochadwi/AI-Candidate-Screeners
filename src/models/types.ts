@@ -26,6 +26,20 @@ export interface ProjectEvaluationScores {
   creativity: number; // 1-5 scale, weight: 10%
 }
 
+// Intermediate result from CV evaluation chain
+export interface CVEvaluationResult {
+  cvMatchRate: number; // 0-1 scale (weighted average × 0.2)
+  cvScores: CVEvaluationScores; // Detailed CV parameter scores
+  cvFeedback: string;
+}
+
+// Intermediate result from Project evaluation chain
+export interface ProjectEvaluationResult {
+  projectScore: number; // 1-5 scale (weighted average)
+  projectScores: ProjectEvaluationScores; // Detailed project parameter scores
+  projectFeedback: string;
+}
+
 export interface EvaluationResult {
   cvMatchRate: number; // 0-1 scale (weighted average × 0.2)
   projectScore: number; // 1-5 scale (weighted average)

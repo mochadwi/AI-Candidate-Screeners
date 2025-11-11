@@ -5,6 +5,8 @@ export type {
   FileInfo,
   Job,
   EvaluationResult,
+  CVEvaluationResult,
+  ProjectEvaluationResult,
   CVEvaluationScores,
   ProjectEvaluationScores,
   JobStatus,

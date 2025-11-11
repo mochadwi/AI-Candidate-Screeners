@@ -1,10 +1,12 @@
-export * from './types';
+export * from "./types";
 
 // Re-export commonly used types
 export type {
   FileInfo,
   Job,
   EvaluationResult,
+  CVEvaluationScores,
+  ProjectEvaluationScores,
   JobStatus,
   FileType,
   CreateJobRequest,
@@ -15,5 +17,5 @@ export type {
   ErrorResponse,
   APIResponse,
   IAIProvider,
-  PDFParseResult
-} from './types';
+  PDFParseResult,
+} from "./types";

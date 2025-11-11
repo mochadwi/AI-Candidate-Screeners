@@ -1,6 +1,6 @@
-export type FileType = 'cv' | 'project';
+export type FileType = "cv" | "project";
 
-export type JobStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type JobStatus = "pending" | "processing" | "completed" | "failed";
 
 export interface FileInfo {
   id: string;
@@ -11,9 +11,26 @@ export interface FileInfo {
   uploadedAt: Date;
 }
 
+export interface CVEvaluationScores {
+  technicalSkillsMatch: number; // 1-5 scale, weight: 40%
+  experienceLevel: number; // 1-5 scale, weight: 25%
+  relevantAchievements: number; // 1-5 scale, weight: 20%
+  culturalFit: number; // 1-5 scale, weight: 15%
+}
+
+export interface ProjectEvaluationScores {
+  correctness: number; // 1-5 scale, weight: 30%
+  codeQuality: number; // 1-5 scale, weight: 25%
+  resilience: number; // 1-5 scale, weight: 20%
+  documentation: number; // 1-5 scale, weight: 15%
+  creativity: number; // 1-5 scale, weight: 10%
+}
+
 export interface EvaluationResult {
-  cvMatchRate: number; // 0-1 scale
-  projectScore: number; // 1-5 scale
+  cvMatchRate: number; // 0-1 scale (weighted average × 0.2)
+  projectScore: number; // 1-5 scale (weighted average)
+  cvScores?: CVEvaluationScores; // Detailed CV parameter scores
+  projectScores?: ProjectEvaluationScores; // Detailed project parameter scores
   cvFeedback: string;
   projectFeedback: string;
   summary: string;
@@ -68,7 +85,7 @@ export interface JobStatusResponse {
 }
 
 export interface HealthResponse {
-  status: 'OK';
+  status: "OK";
   timestamp: string;
   uptime: number;
   environment: string;
@@ -87,14 +104,18 @@ export interface ErrorResponse {
 export interface APIResponse<T = any> {
   success: boolean;
   data?: T;
-  error?: ErrorResponse['error'];
+  error?: ErrorResponse["error"];
   timestamp: string;
 }
 
 // AI Provider Interface
 export interface IAIProvider {
   evaluate(prompt: string): Promise<string>;
-  evaluateCVAndProject(cvText: string, projectText: string, jobTitle: string): Promise<EvaluationResult>;
+  evaluateCVAndProject(
+    cvText: string,
+    projectText: string,
+    jobTitle: string,
+  ): Promise<EvaluationResult>;
   isConfigured(): boolean;
 }
 

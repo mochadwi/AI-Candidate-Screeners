@@ -155,5 +155,35 @@
       "summary": "Strong candidate with proven backend scalability experience and solid understanding of modern AI integration patterns. Quick learner demonstrated by implementing complex RAG and LLM chaining in the project. While AI/LLM experience wasn't explicitly shown in CV, the project submission shows capability and enthusiasm for the AI-augmented backend role. Good cultural fit with remote experience and collaborative mindset."
     },
     "completedAt": "2025-11-11T10:07:50.570Z"
+  },
+  "0bab9120-1d3a-494b-a909-fb73e1272929": {
+    "id": "0bab9120-1d3a-494b-a909-fb73e1272929",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "completed",
+    "createdAt": "2025-11-11T10:45:15.397Z",
+    "updatedAt": "2025-11-11T10:45:22.601Z",
+    "result": {
+      "cvMatchRate": 0.89,
+      "projectScore": 3.9,
+      "cvScores": {
+        "technicalSkillsMatch": 4,
+        "experienceLevel": 5,
+        "relevantAchievements": 5,
+        "culturalFit": 4
+      },
+      "projectScores": {
+        "correctness": 4,
+        "codeQuality": 4,
+        "resilience": 4,
+        "documentation": 4,
+        "creativity": 3
+      },
+      "cvFeedback": "Strong backend foundation with 9+ years experience across multiple domains (Healthcare, E-commerce, Fintech). Proven track record of scaling systems from 100k to 100M users and achieving 2x performance improvements. Technical skills align well with requirements (Kotlin/Java, Python, AWS, Docker). Limited explicit AI/LLM integration experience in CV, though recent work with Next.js and TypeScript shows adaptability. Leadership experience demonstrated through team lead roles and mentoring 20+ students.",
+      "projectFeedback": "Well-structured solution addressing all core requirements including RAG implementation, LLM chaining, and async job processing. Good separation of concerns with proper API design (/upload, /evaluate, /result). Demonstrates solid understanding of error handling with retry mechanisms and backoff strategies. Documentation is comprehensive with clear README and design explanations. Could benefit from more extensive test coverage and additional creative features like authentication or monitoring dashboards.",
+      "summary": "Strong candidate with extensive backend experience and proven ability to deliver high-impact solutions at scale. Technical skills closely match requirements with solid foundation in modern backend technologies and cloud platforms. While AI/LLM experience isn't explicitly demonstrated in past roles, the project submission shows good understanding of AI integration patterns and ability to quickly adapt to new technologies. Recommended to continue building AI/LLM expertise through hands-on projects and consider contributing to open-source AI projects to strengthen this area."
+    },
+    "completedAt": "2025-11-11T10:45:22.601Z"
   }
 }

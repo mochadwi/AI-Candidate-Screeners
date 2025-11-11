@@ -51,13 +51,18 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     console.log(`📁 Evaluation Route: CV File ID: ${cvFileId}`);
     console.log(`📁 Evaluation Route: Project File ID: ${projectFileId}`);
 
-    // Start async evaluation
+    // Start async evaluation with proper error handling
     processEvaluationAsync(
       job.id,
       cvFileInfo.path,
       projectFileInfo.path,
       title,
-    );
+    ).catch((error) => {
+      console.error(
+        `🚨 Unhandled async evaluation error for job ${job.id}:`,
+        error,
+      );
+    });
 
     console.log(
       `🚀 Evaluation Route: Created job ${job.id}, returning response`,
@@ -87,14 +92,25 @@ async function processEvaluationAsync(
   jobTitle: string,
 ): Promise<void> {
   try {
+    console.log(`🔄 Starting evaluation for job ${jobId}`);
+
     // Update job status to processing
     await jobService.updateJobStatus(jobId, "processing");
+    console.log(`✅ Job ${jobId} status updated to processing`);
 
     // Extract text from PDFs
+    console.log(`📄 Extracting text from CV: ${cvFilePath}`);
+    console.log(`📄 Extracting text from project: ${projectFilePath}`);
+
     const [cvText, projectText] = await Promise.all([
       pdfService.extractTextFromPDF(cvFilePath),
       pdfService.extractTextFromPDF(projectFilePath),
     ]);
+
+    console.log(`✅ CV text extracted: ${cvText?.length || 0} characters`);
+    console.log(
+      `✅ Project text extracted: ${projectText?.length || 0} characters`,
+    );
 
     // Validate extracted text
     if (!cvText || cvText.trim().length === 0) {
@@ -106,12 +122,14 @@ async function processEvaluationAsync(
     }
 
     // Get AI evaluation
+    console.log(`🤖 Starting AI evaluation for job ${jobId}`);
     const aiProvider = createAIProvider();
     const evaluationResult = await aiProvider.evaluateCVAndProject(
       cvText,
       projectText,
       jobTitle,
     );
+    console.log(`✅ AI evaluation completed for job ${jobId}`);
 
     // Update job with results
     await jobService.updateJobStatus(jobId, "completed", evaluationResult);
@@ -121,10 +139,13 @@ async function processEvaluationAsync(
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
 
+    console.error(`❌ Evaluation failed for job ${jobId}:`, errorMessage);
+    console.error(`❌ Error details:`, error);
+
     // Update job with error
     await jobService.updateJobStatus(jobId, "failed", undefined, errorMessage);
 
-    console.error(`❌ Evaluation failed for job ${jobId}:`, errorMessage);
+    console.error(`❌ Job ${jobId} updated with failed status`);
   }
 }
 

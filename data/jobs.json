@@ -49,5 +49,111 @@
     "status": "processing",
     "createdAt": "2025-11-11T07:29:57.546Z",
     "updatedAt": "2025-11-11T07:29:57.548Z"
+  },
+  "36a08fb6-4e1e-43ec-b10a-613e908bb64a": {
+    "id": "36a08fb6-4e1e-43ec-b10a-613e908bb64a",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "processing",
+    "createdAt": "2025-11-11T07:58:18.505Z",
+    "updatedAt": "2025-11-11T07:58:18.509Z"
+  },
+  "db17b030-9404-4fe3-8c54-63ac0d1a0e4f": {
+    "id": "db17b030-9404-4fe3-8c54-63ac0d1a0e4f",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "processing",
+    "createdAt": "2025-11-11T07:59:01.516Z",
+    "updatedAt": "2025-11-11T07:59:01.519Z"
+  },
+  "10a6b4eb-0588-46d6-a28b-b86df0300351": {
+    "id": "10a6b4eb-0588-46d6-a28b-b86df0300351",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "processing",
+    "createdAt": "2025-11-11T08:21:11.729Z",
+    "updatedAt": "2025-11-11T08:21:11.733Z"
+  },
+  "4f2e9489-7086-4175-976f-e2f58eecc803": {
+    "id": "4f2e9489-7086-4175-976f-e2f58eecc803",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "processing",
+    "createdAt": "2025-11-11T08:21:21.774Z",
+    "updatedAt": "2025-11-11T08:21:21.779Z"
+  },
+  "5160d6ae-edab-491e-acc0-c62e766cf5f3": {
+    "id": "5160d6ae-edab-491e-acc0-c62e766cf5f3",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "processing",
+    "createdAt": "2025-11-11T08:21:33.840Z",
+    "updatedAt": "2025-11-11T08:21:33.846Z"
+  },
+  "b417f01d-191b-4038-943c-e4722cd9f923": {
+    "id": "b417f01d-191b-4038-943c-e4722cd9f923",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "processing",
+    "createdAt": "2025-11-11T08:47:42.385Z",
+    "updatedAt": "2025-11-11T08:47:42.390Z"
+  },
+  "05cfd464-bc7b-4c7f-9476-ffba5f171956": {
+    "id": "05cfd464-bc7b-4c7f-9476-ffba5f171956",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "processing",
+    "createdAt": "2025-11-11T08:48:46.322Z",
+    "updatedAt": "2025-11-11T08:48:46.324Z"
+  },
+  "9feddf62-4046-4fd7-9d1d-3f75a1d10d95": {
+    "id": "9feddf62-4046-4fd7-9d1d-3f75a1d10d95",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "processing",
+    "createdAt": "2025-11-11T10:05:31.348Z",
+    "updatedAt": "2025-11-11T10:05:31.351Z"
+  },
+  "bbd2d26a-c51c-47ca-a99f-111c5c303b17": {
+    "id": "bbd2d26a-c51c-47ca-a99f-111c5c303b17",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "completed",
+    "createdAt": "2025-11-11T10:06:16.939Z",
+    "updatedAt": "2025-11-11T10:06:46.023Z",
+    "result": {
+      "cvMatchRate": 0.89,
+      "projectScore": 4.5,
+      "cvFeedback": "Strong backend foundation with 9+ years experience across multiple technologies (Kotlin, Java, Python, TypeScript). Proven track record scaling applications to 100M+ users at DANA and leading teams at Staffinc. Excellent performance optimization achievements (2x improvement, 50-70% cost reduction). Cloud experience with AWS and modern backend stack. Limited explicit AI/LLM production experience but demonstrates strong learning capability and technical depth.",
+      "projectFeedback": "Well-architected solution demonstrating solid understanding of RAG implementation, LLM chaining, and asynchronous processing. Proper consideration of error handling, retries, and production concerns. Clean separation of concerns with modular design. Could benefit from more comprehensive testing coverage and deployment automation. Good documentation of design decisions and trade-offs.",
+      "summary": "Excellent candidate with strong backend expertise and proven scaling experience. Demonstrates quick learning ability with AI/LLM concepts through the project. Leadership experience and performance optimization track record align well with senior role requirements. Would be a strong addition to the team with potential to grow into AI/LLM specialization."
+    },
+    "completedAt": "2025-11-11T10:06:46.023Z"
+  },
+  "97ffef5d-c48c-4367-82bc-a776d3942cf0": {
+    "id": "97ffef5d-c48c-4367-82bc-a776d3942cf0",
+    "title": "Senior Backend Developer",
+    "cvFileId": "54fe83d4-b621-4ef6-aeb5-9097ebff5203",
+    "projectFileId": "18a7b799-3929-4ceb-a5ab-1aa3476e1841",
+    "status": "completed",
+    "createdAt": "2025-11-11T10:07:37.302Z",
+    "updatedAt": "2025-11-11T10:07:50.570Z",
+    "result": {
+      "cvMatchRate": 0.75,
+      "projectScore": 4.2,
+      "cvFeedback": "Strong backend foundation with 9+ years experience in scalable systems (100k to 100M users). Demonstrates solid technical skills in Java/Kotlin, Python, TypeScript, and AWS. Notable achievements include 2x performance improvements, 95% query optimization (3s to 157ms), and 70% cost reduction. However, limited explicit AI/LLM experience and vector database knowledge in CV. Mobile-heavy background may need transition to pure backend focus.",
+      "projectFeedback": "Well-structured solution addressing all core requirements: RAG implementation with vector DB, LLM chaining for multi-stage evaluation, async job processing, and comprehensive error handling. Good API design with proper status tracking. Demonstrates understanding of AI workflows and prompt engineering. Areas for improvement: more robust testing coverage, production-ready deployment considerations, and advanced caching strategies for repeated evaluations.",
+      "summary": "Strong candidate with proven backend scalability experience and solid understanding of modern AI integration patterns. Quick learner demonstrated by implementing complex RAG and LLM chaining in the project. While AI/LLM experience wasn't explicitly shown in CV, the project submission shows capability and enthusiasm for the AI-augmented backend role. Good cultural fit with remote experience and collaborative mindset."
+    },
+    "completedAt": "2025-11-11T10:07:50.570Z"
   }
 }

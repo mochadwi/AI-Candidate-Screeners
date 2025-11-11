@@ -1,0 +1,30 @@
+# Ignore runtime data files
+data/**
+uploads/**
+logs/**
+*.log
+
+# Ignore build artifacts
+dist/**
+coverage/**
+*.tsbuildinfo
+
+# Ignore dependencies
+node_modules/**
+
+# Ignore environment and config
+.env
+.env.*
+
+# Ignore git
+.git/**
+
+# Ignore temp files
+tmp/**
+temp/**
+*.tmp
+*.temp
+
+# Ignore JSON data files (but not config)
+data/*.json
+*.log.json

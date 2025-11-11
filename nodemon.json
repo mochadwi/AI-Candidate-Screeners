@@ -1,0 +1,22 @@
+{
+  "watch": ["src/**/*.ts"],
+  "ignore": [
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "uploads/**",
+    "data/**",
+    "logs/**",
+    "*.log",
+    "tmp/**",
+    ".git/**",
+    "node_modules/**",
+    "dist/**",
+    "coverage/**",
+    ".env",
+    "*.json",
+    "package-lock.json"
+  ],
+  "exec": "ts-node src/index.ts",
+  "delay": 2500,
+  "verbose": true
+}

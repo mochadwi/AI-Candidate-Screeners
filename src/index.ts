@@ -111,6 +111,18 @@ app.use(errorHandler);
 
 const PORT = config.app.port || 3000;
 
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('🚨 Unhandled Promise Rejection at:', promise, 'reason:', reason);
+  // Don't exit the process, just log the error
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('💥 Uncaught Exception:', error);
+  // Don't exit the process, just log the error
+});
+
 const startServer = async () => {
   try {
     app.listen(PORT, () => {

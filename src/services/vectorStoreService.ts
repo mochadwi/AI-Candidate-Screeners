@@ -1,14 +1,18 @@
-import { ChromaClient, Collection } from 'chromadb';
-import OpenAI from 'openai';
-import { config } from '../config/environment';
-import { AppError } from '../middleware/errorHandler';
+import { ChromaClient, Collection } from "chromadb";
+import OpenAI from "openai";
+import { config } from "../config/environment";
+import { AppError } from "../middleware/errorHandler";
 
 export interface DocumentChunk {
   id: string;
   text: string;
   metadata: {
     source: string;
-    doc_type: 'job-description' | 'case-study-brief' | 'cv-rubric' | 'project-rubric';
+    doc_type:
+      | "job-description"
+      | "case-study-brief"
+      | "cv-rubric"
+      | "project-rubric";
     chunk_index: number;
   };
 }
@@ -16,7 +20,7 @@ export interface DocumentChunk {
 export interface RetrievalResult {
   text: string;
   score: number;
-  metadata: DocumentChunk['metadata'];
+  metadata: DocumentChunk["metadata"];
 }
 
 export class VectorStoreService {
@@ -26,21 +30,21 @@ export class VectorStoreService {
 
   // Collection names
   private readonly COLLECTIONS = {
-    JOB_DESCRIPTIONS: 'job_descriptions',
-    CASE_STUDY: 'case_study_brief',
-    CV_RUBRIC: 'cv_scoring_rubric',
-    PROJECT_RUBRIC: 'project_scoring_rubric'
+    JOB_DESCRIPTIONS: "job_descriptions",
+    CASE_STUDY: "case_study_brief",
+    CV_RUBRIC: "cv_scoring_rubric",
+    PROJECT_RUBRIC: "project_scoring_rubric",
   };
 
   constructor() {
-    // Initialize ChromaDB client
+    // Initialize ChromaDB client (requires server running on http://localhost:8000)
     this.client = new ChromaClient({
-      path: process.env.CHROMA_PATH || 'http://localhost:8000'
+      path: process.env.CHROMA_PATH || "http://localhost:8000",
     });
 
     // Initialize OpenAI client for embeddings
     const clientConfig: any = {
-      apiKey: config.ai.apiKey
+      apiKey: config.ai.apiKey,
     };
 
     if (config.ai.baseUrl) {
@@ -55,22 +59,31 @@ export class VectorStoreService {
    */
   async initialize(): Promise<void> {
     try {
-      console.log('🔧 Initializing vector store collections...');
+      console.log("🔧 Initializing vector store collections...");
 
-      // Get or create collections
+      // Get or create collections with custom embedding function
       for (const [key, name] of Object.entries(this.COLLECTIONS)) {
         const collection = await this.client.getOrCreateCollection({
           name,
-          metadata: { description: `Collection for ${key}` }
+          metadata: { description: `Collection for ${key}` },
+          embeddingFunction: {
+            generate: async (texts: string[]) => {
+              // Generate embeddings for all texts using our embedding method
+              const embeddings = await Promise.all(
+                texts.map((text) => this.generateEmbedding(text)),
+              );
+              return embeddings;
+            },
+          },
         });
         this.collections.set(name, collection);
         console.log(`✅ Collection "${name}" ready`);
       }
 
-      console.log('✅ Vector store initialized');
+      console.log("✅ Vector store initialized");
     } catch (error) {
-      console.error('❌ Failed to initialize vector store:', error);
-      throw new AppError('Vector store initialization failed', 500);
+      console.error("❌ Failed to initialize vector store:", error);
+      throw new AppError("Vector store initialization failed", 500);
     }
   }
 
@@ -80,9 +93,10 @@ export class VectorStoreService {
   private async generateEmbedding(text: string): Promise<number[]> {
     try {
       // Use appropriate embedding model based on provider
-      const embeddingModel = config.ai.provider === 'zhipu'
-        ? 'embedding-2'
-        : 'text-embedding-3-small';
+      const embeddingModel =
+        config.ai.provider === "zhipu"
+          ? "embedding-2"
+          : "text-embedding-3-small";
 
       const response = await this.openaiClient.embeddings.create({
         model: embeddingModel,
@@ -91,8 +105,8 @@ export class VectorStoreService {
 
       return response.data[0].embedding;
     } catch (error) {
-      console.error('❌ Embedding generation failed:', error);
-      throw new AppError('Failed to generate embeddings', 500);
+      console.error("❌ Embedding generation failed:", error);
+      throw new AppError("Failed to generate embeddings", 500);
     }
   }
 
@@ -101,7 +115,7 @@ export class VectorStoreService {
    */
   async addDocuments(
     collectionName: string,
-    chunks: DocumentChunk[]
+    chunks: DocumentChunk[],
   ): Promise<void> {
     try {
       const collection = this.collections.get(collectionName);
@@ -120,10 +134,10 @@ export class VectorStoreService {
 
       // Add to collection
       await collection.add({
-        ids: chunks.map(c => c.id),
+        ids: chunks.map((c) => c.id),
         embeddings,
-        documents: chunks.map(c => c.text),
-        metadatas: chunks.map(c => c.metadata as any)
+        documents: chunks.map((c) => c.text),
+        metadatas: chunks.map((c) => c.metadata as any),
       });
 
       console.log(`✅ Added ${chunks.length} chunks to ${collectionName}`);
@@ -131,7 +145,7 @@ export class VectorStoreService {
       console.error(`❌ Failed to add documents to ${collectionName}:`, error);
       throw error instanceof AppError
         ? error
-        : new AppError('Failed to add documents to vector store', 500);
+        : new AppError("Failed to add documents to vector store", 500);
     }
   }
 
@@ -141,7 +155,7 @@ export class VectorStoreService {
   async query(
     collectionName: string,
     queryText: string,
-    topK: number = 3
+    topK: number = 3,
   ): Promise<RetrievalResult[]> {
     try {
       const collection = this.collections.get(collectionName);
@@ -155,7 +169,7 @@ export class VectorStoreService {
       // Query collection
       const results = await collection.query({
         queryEmbeddings: [queryEmbedding],
-        nResults: topK
+        nResults: topK,
       });
 
       // Format results
@@ -165,7 +179,9 @@ export class VectorStoreService {
         for (let i = 0; i < results.documents[0].length; i++) {
           const document = results.documents[0][i];
           const distance = results.distances?.[0]?.[i] || 1;
-          const metadata = results.metadatas?.[0]?.[i] as DocumentChunk['metadata'];
+          const metadata = results.metadatas?.[0]?.[
+            i
+          ] as DocumentChunk["metadata"];
 
           // Convert distance to similarity score (lower distance = higher similarity)
           const score = 1 - Math.min(distance, 1);
@@ -174,7 +190,7 @@ export class VectorStoreService {
             retrievalResults.push({
               text: document,
               score,
-              metadata
+              metadata,
             });
           }
         }
@@ -185,60 +201,81 @@ export class VectorStoreService {
       console.error(`❌ Query failed for ${collectionName}:`, error);
       throw error instanceof AppError
         ? error
-        : new AppError('Vector store query failed', 500);
+        : new AppError("Vector store query failed", 500);
     }
   }
 
   /**
    * Retrieve job description context for CV evaluation
    */
-  async getJobDescriptionContext(jobTitle: string, topK: number = 3): Promise<string> {
+  async getJobDescriptionContext(
+    jobTitle: string,
+    topK: number = 3,
+  ): Promise<string> {
     const queryText = `Job requirements and responsibilities for ${jobTitle} position`;
-    const results = await this.query(this.COLLECTIONS.JOB_DESCRIPTIONS, queryText, topK);
+    const results = await this.query(
+      this.COLLECTIONS.JOB_DESCRIPTIONS,
+      queryText,
+      topK,
+    );
 
     return results
-      .filter(r => r.score > 0.5) // Only include relevant results
-      .map(r => r.text)
-      .join('\n\n');
+      .filter((r) => r.score > 0.5) // Only include relevant results
+      .map((r) => r.text)
+      .join("\n\n");
   }
 
   /**
    * Retrieve case study brief context for project evaluation
    */
   async getCaseStudyContext(topK: number = 3): Promise<string> {
-    const queryText = 'Case study requirements, deliverables, and evaluation criteria';
-    const results = await this.query(this.COLLECTIONS.CASE_STUDY, queryText, topK);
+    const queryText =
+      "Case study requirements, deliverables, and evaluation criteria";
+    const results = await this.query(
+      this.COLLECTIONS.CASE_STUDY,
+      queryText,
+      topK,
+    );
 
     return results
-      .filter(r => r.score > 0.5)
-      .map(r => r.text)
-      .join('\n\n');
+      .filter((r) => r.score > 0.5)
+      .map((r) => r.text)
+      .join("\n\n");
   }
 
   /**
    * Retrieve CV scoring rubric context
    */
   async getCVRubricContext(topK: number = 2): Promise<string> {
-    const queryText = 'CV evaluation parameters, scoring criteria, and weights';
-    const results = await this.query(this.COLLECTIONS.CV_RUBRIC, queryText, topK);
+    const queryText = "CV evaluation parameters, scoring criteria, and weights";
+    const results = await this.query(
+      this.COLLECTIONS.CV_RUBRIC,
+      queryText,
+      topK,
+    );
 
     return results
-      .filter(r => r.score > 0.5)
-      .map(r => r.text)
-      .join('\n\n');
+      .filter((r) => r.score > 0.5)
+      .map((r) => r.text)
+      .join("\n\n");
   }
 
   /**
    * Retrieve project scoring rubric context
    */
   async getProjectRubricContext(topK: number = 2): Promise<string> {
-    const queryText = 'Project evaluation parameters, scoring criteria, and weights';
-    const results = await this.query(this.COLLECTIONS.PROJECT_RUBRIC, queryText, topK);
+    const queryText =
+      "Project evaluation parameters, scoring criteria, and weights";
+    const results = await this.query(
+      this.COLLECTIONS.PROJECT_RUBRIC,
+      queryText,
+      topK,
+    );
 
     return results
-      .filter(r => r.score > 0.5)
-      .map(r => r.text)
-      .join('\n\n');
+      .filter((r) => r.score > 0.5)
+      .map((r) => r.text)
+      .join("\n\n");
   }
 
   /**
@@ -248,13 +285,13 @@ export class VectorStoreService {
     try {
       await this.client.deleteCollection({ name: collectionName });
       const collection = await this.client.createCollection({
-        name: collectionName
+        name: collectionName,
       });
       this.collections.set(collectionName, collection);
       console.log(`🗑️ Cleared collection: ${collectionName}`);
     } catch (error) {
       console.error(`❌ Failed to clear collection ${collectionName}:`, error);
-      throw new AppError('Failed to clear collection', 500);
+      throw new AppError("Failed to clear collection", 500);
     }
   }
 

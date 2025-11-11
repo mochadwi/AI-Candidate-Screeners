@@ -1,10 +1,10 @@
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs/promises';
-import { v4 as uuidv4 } from 'uuid';
-import { config } from '../config/environment';
-import { FileInfo, FileType } from '../models';
-import { RequestHandler } from 'express';
+import multer from "multer";
+import path from "path";
+import fs from "fs/promises";
+import { v4 as uuidv4 } from "uuid";
+import { config } from "../config/environment";
+import { FileInfo, FileType } from "../models";
+import { RequestHandler } from "express";
 
 export class FileService {
   private uploadDir: string;
@@ -33,43 +33,65 @@ export class FileService {
         const uniqueSuffix = uuidv4();
         const extension = path.extname(file.originalname);
         cb(null, `${type}_${uniqueSuffix}${extension}`);
-      }
+      },
     });
 
-    const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-      if (file.mimetype === 'application/pdf') {
+    const fileFilter = (
+      req: any,
+      file: Express.Multer.File,
+      cb: multer.FileFilterCallback,
+    ) => {
+      if (file.mimetype === "application/pdf") {
         cb(null, true);
       } else {
-        cb(new Error('Only PDF files are allowed'));
+        cb(new Error("Only PDF files are allowed"));
       }
     };
 
     return {
       storage,
       limits: {
-        fileSize: this.maxFileSize
+        fileSize: this.maxFileSize,
       },
-      fileFilter
+      fileFilter,
     };
   }
 
   getUploadMiddleware(type: FileType): RequestHandler {
-    return multer(this.getMulterConfig(type)).single('file');
+    return multer(this.getMulterConfig(type)).single("file");
   }
 
   async saveFileInfo(
     file: Express.Multer.File,
-    type: FileType
-  ): Promise<FileInfo> {
+    type: FileType,
+  ): Promise<FileInfo | null> {
+    const filename = file.filename;
+    const fullPath = path.join(this.uploadDir, filename);
+    const fileId = path.parse(filename).name.replace(/^(cv_|project_)/, "");
     const fileInfo: FileInfo = {
-      id: uuidv4(),
+      id: fileId,
       originalName: file.originalname,
-      path: file.path,
-      type,
       size: file.size,
-      uploadedAt: new Date()
+      type,
+      path: fullPath,
+      uploadedAt: new Date(),
     };
 
+    // Check if file already exists to avoid duplicates and use existing file path
+    try {
+      await fs.access(fullPath);
+      console.log(`⚠️ File already exists, using existing: ${fullPath}`);
+
+      // Return existing file info instead of creating new one
+      const existingFileInfo = this.getFileInfo(fullPath);
+      if (existingFileInfo !== null) {
+        return existingFileInfo;
+      }
+    } catch {
+      // File doesn't exist
+    }
+
+    console.log(`📝 Saved file: ${filename} with ID: ${fileInfo.id}`);
     return fileInfo;
   }
 
@@ -77,14 +99,14 @@ export class FileService {
     try {
       const stats = await fs.stat(filePath);
       const filename = path.basename(filePath);
-
+      const fileId = path.parse(filename).name.replace(/^(cv_|project_)/, "");
       return {
-        id: path.parse(filename).name,
+        id: fileId,
         originalName: filename,
         path: filePath,
-        type: filename.startsWith('cv_') ? 'cv' : 'project',
+        type: filename.startsWith("cv_") ? "cv" : "project",
         size: stats.size,
-        uploadedAt: stats.mtime
+        uploadedAt: stats.mtime,
       };
     } catch {
       return null;
@@ -100,11 +122,14 @@ export class FileService {
     }
   }
 
-  async validateFileExists(fileId: string, type: FileType): Promise<FileInfo | null> {
+  async validateFileExists(
+    fileId: string,
+    type: FileType,
+  ): Promise<FileInfo | null> {
     try {
       const files = await fs.readdir(this.uploadDir);
-      const filename = files.find(file =>
-        file.startsWith(`${type}_`) && file.includes(fileId)
+      const filename = files.find((file) =>
+        file.startsWith(`${type}_${fileId}`),
       );
 
       if (!filename) {

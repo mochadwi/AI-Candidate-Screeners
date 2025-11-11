@@ -2,9 +2,11 @@ import OpenAI from "openai";
 import { config } from "../config/environment";
 import { IAIProvider, EvaluationResult } from "../models";
 import { AppError } from "../middleware/errorHandler";
+import { getVectorStore } from "./vectorStoreService";
 
 export class OpenAIProvider implements IAIProvider {
   private client: OpenAI;
+  private vectorStore = getVectorStore();
   private maxRetries: number = 3;
   private retryDelay: number = 1000; // 1 second
 
@@ -97,9 +99,38 @@ export class OpenAIProvider implements IAIProvider {
     projectText: string,
     jobTitle: string,
   ): Promise<EvaluationResult> {
-    const prompt = this.buildEvaluationPrompt(cvText, projectText, jobTitle);
-
     try {
+      // Initialize vector store if needed
+      await this.vectorStore.initialize();
+
+      // Retrieve relevant context from ground truth documents
+      console.log("🔍 Retrieving context from vector store...");
+
+      const [
+        jobContext,
+        caseStudyContext,
+        cvRubricContext,
+        projectRubricContext,
+      ] = await Promise.all([
+        this.vectorStore.getJobDescriptionContext(jobTitle),
+        this.vectorStore.getCaseStudyContext(),
+        this.vectorStore.getCVRubricContext(),
+        this.vectorStore.getProjectRubricContext(),
+      ]);
+
+      console.log("✅ Context retrieved successfully");
+
+      // Build prompt with retrieved context
+      const prompt = this.buildEvaluationPrompt(
+        cvText,
+        projectText,
+        jobTitle,
+        jobContext,
+        caseStudyContext,
+        cvRubricContext,
+        projectRubricContext,
+      );
+
       const response = await this.evaluate(prompt);
 
       // Parse and validate the response
@@ -121,16 +152,26 @@ export class OpenAIProvider implements IAIProvider {
     cvText: string,
     projectText: string,
     jobTitle: string,
+    jobContext: string,
+    caseStudyContext: string,
+    cvRubricContext: string,
+    projectRubricContext: string,
   ): string {
     const cleanedCVText = this.cleanText(cvText);
     const cleanedProjectText = this.cleanText(projectText);
 
     return `You are an expert technical evaluator. Analyze the following CV and project for the position: "${jobTitle}"
 
-CV Content:
+=== JOB REQUIREMENTS (Ground Truth) ===
+${jobContext || "No specific job requirements retrieved."}
+
+=== CASE STUDY REQUIREMENTS (Ground Truth) ===
+${caseStudyContext || "No specific case study requirements retrieved."}
+
+=== CANDIDATE CV ===
 ${cleanedCVText}
 
-Project Report Content:
+=== CANDIDATE PROJECT REPORT ===
 ${cleanedProjectText}
 
 Provide evaluation in JSON format with the following structure:
@@ -153,72 +194,11 @@ Provide evaluation in JSON format with the following structure:
   "summary": "overall assessment (3-5 sentences covering strengths, gaps, and recommendations)"
 }
 
-CV EVALUATION RUBRIC (1-5 scale):
+=== CV EVALUATION RUBRIC (Retrieved from Ground Truth) ===
+${cvRubricContext || "Use standard 1-5 scale for: Technical Skills (40%), Experience (25%), Achievements (20%), Cultural Fit (15%)"}
 
-1. Technical Skills Match (Weight: 40%)
-   - 1: Irrelevant skills
-   - 2: Few overlaps with requirements
-   - 3: Partial match with job requirements
-   - 4: Strong match with requirements
-   - 5: Excellent match + AI/LLM exposure
-
-2. Experience Level (Weight: 25%)
-   - 1: <1 year or trivial projects
-   - 2: 1-2 years experience
-   - 3: 2-3 years with mid-scale projects
-   - 4: 3-4 years solid track record
-   - 5: 5+ years with high-impact projects
-
-3. Relevant Achievements (Weight: 20%)
-   - 1: No clear achievements
-   - 2: Minimal improvements
-   - 3: Some measurable outcomes
-   - 4: Significant contributions
-   - 5: Major measurable impact
-
-4. Cultural/Collaboration Fit (Weight: 15%)
-   - 1: Not demonstrated
-   - 2: Minimal evidence
-   - 3: Average communication/teamwork
-   - 4: Good collaboration skills
-   - 5: Excellent and well-demonstrated
-
-PROJECT EVALUATION RUBRIC (1-5 scale):
-
-1. Correctness (Prompt & Chaining) (Weight: 30%)
-   - 1: Not implemented
-   - 2: Minimal attempt
-   - 3: Works partially
-   - 4: Works correctly
-   - 5: Fully correct + thoughtful design
-
-2. Code Quality & Structure (Weight: 25%)
-   - 1: Poor quality
-   - 2: Some structure
-   - 3: Decent modularity
-   - 4: Good structure + some tests
-   - 5: Excellent quality + strong tests
-
-3. Resilience & Error Handling (Weight: 20%)
-   - 1: Missing error handling
-   - 2: Minimal handling
-   - 3: Partial error handling
-   - 4: Solid error handling
-   - 5: Robust, production-ready
-
-4. Documentation & Explanation (Weight: 15%)
-   - 1: Missing documentation
-   - 2: Minimal docs
-   - 3: Adequate documentation
-   - 4: Clear documentation
-   - 5: Excellent + insightful explanations
-
-5. Creativity/Bonus (Weight: 10%)
-   - 1: No extras
-   - 2: Very basic additions
-   - 3: Useful extra features
-   - 4: Strong enhancements
-   - 5: Outstanding creativity
+=== PROJECT EVALUATION RUBRIC (Retrieved from Ground Truth) ===
+${projectRubricContext || "Use standard 1-5 scale for: Correctness (30%), Code Quality (25%), Resilience (20%), Documentation (15%), Creativity (10%)"}
 
 IMPORTANT CALCULATION NOTES:
 - Evaluate each parameter independently using the rubric above

@@ -1,0 +1,13 @@
+{
+  "05c0240c-1ae9-4e08-a465-b3822ff56868": {
+    "id": "05c0240c-1ae9-4e08-a465-b3822ff56868",
+    "title": "Senior Backend Developer",
+    "cvFileId": "c5ec6acd-83ef-4324-95a4-78a0f340e610",
+    "projectFileId": "7d5dd7ae-207b-4559-95d5-3ac91bb026bb",
+    "status": "failed",
+    "createdAt": "2025-11-11T04:25:16.903Z",
+    "updatedAt": "2025-11-11T04:25:16.908Z",
+    "error": "Failed to extract text from PDF file",
+    "completedAt": "2025-11-11T04:25:16.908Z"
+  }
+}

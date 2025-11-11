@@ -47,12 +47,20 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
       projectFileId,
     });
 
+    console.log(`🎯 Evaluation Route: Creating job with title: ${title}`);
+    console.log(`📁 Evaluation Route: CV File ID: ${cvFileId}`);
+    console.log(`📁 Evaluation Route: Project File ID: ${projectFileId}`);
+
     // Start async evaluation
     processEvaluationAsync(
       job.id,
       cvFileInfo.path,
       projectFileInfo.path,
       title,
+    );
+
+    console.log(
+      `🚀 Evaluation Route: Created job ${job.id}, returning response`,
     );
 
     const response: CreateJobResponse = {

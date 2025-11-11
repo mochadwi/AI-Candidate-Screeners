@@ -12,7 +12,7 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { jobId } = req.params;
-
+      console.log(`🔍 Results Route: Received request for job ID: ${jobId}`);
       if (!jobId) {
         throw new AppError("Job ID is required", 400);
       }
